@@ -6,7 +6,7 @@ CUR_DIR=$(cd "$(dirname "$0")"; pwd)
 if [ "$(uname)" == "Darwin" ]; then
 	PREMAKE=$CUR_DIR/premake5-osx;
 elif [ "$(expr substr $(uname -s) 1 5)" == "Linux" ]; then
-	PREMAKE=$CUR_DIR/premake5-linux-64;
+	PREMAKE=$CUR_DIR/premake5-linux;
 fi
 
 MONO=mono
