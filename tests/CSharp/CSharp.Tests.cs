@@ -709,20 +709,21 @@ public unsafe class CSharpTests : GeneratorTestFixture
             var fieldOffset = (FieldOffsetAttribute) independentFields[0].GetCustomAttribute(typeof(FieldOffsetAttribute));
             Assert.That(fieldOffset.Value, Is.EqualTo(0));
         }
-        foreach (var internalType in new Type[]
-            {
-                typeof(CSharp.TwoTemplateArgs.__Internal_Ptr),
-                typeof(CSharp.TwoTemplateArgs.__Internalc__S_TwoTemplateArgs___I_I),
-                typeof(CSharp.TwoTemplateArgs.__Internalc__S_TwoTemplateArgs___I_f)
-            })
-        {
-            var independentFields = internalType.GetFields(BindingFlags.Instance | BindingFlags.NonPublic);
-            Assert.That(independentFields.Length, Is.EqualTo(2));
-            var fieldOffsetKey = (FieldOffsetAttribute) independentFields[0].GetCustomAttribute(typeof(FieldOffsetAttribute));
-            Assert.That(fieldOffsetKey.Value, Is.EqualTo(0));
-            var fieldOffsetValue = (FieldOffsetAttribute) independentFields[1].GetCustomAttribute(typeof(FieldOffsetAttribute));
-            Assert.That(fieldOffsetValue.Value, Is.EqualTo(Marshal.SizeOf(IntPtr.Zero)));
-        }
+        // TODO: TwoTemplateArgs.iterator isn't complete without exporting so the method it uses it is ignored so the remaining specializations aren't necessary
+        //foreach (var internalType in new Type[]
+        //    {
+        //        typeof(CSharp.TwoTemplateArgs.__Internal_Ptr),
+        //        typeof(CSharp.TwoTemplateArgs.__Internalc__S_TwoTemplateArgs___I_I),
+        //        typeof(CSharp.TwoTemplateArgs.__Internalc__S_TwoTemplateArgs___I_f)
+        //    })
+        //{
+        //    var independentFields = internalType.GetFields(BindingFlags.Instance | BindingFlags.NonPublic);
+        //    Assert.That(independentFields.Length, Is.EqualTo(2));
+        //    var fieldOffsetKey = (FieldOffsetAttribute) independentFields[0].GetCustomAttribute(typeof(FieldOffsetAttribute));
+        //    Assert.That(fieldOffsetKey.Value, Is.EqualTo(0));
+        //    var fieldOffsetValue = (FieldOffsetAttribute) independentFields[1].GetCustomAttribute(typeof(FieldOffsetAttribute));
+        //    Assert.That(fieldOffsetValue.Value, Is.EqualTo(Marshal.SizeOf(IntPtr.Zero)));
+        //}
     }
 
     [Test]

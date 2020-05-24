@@ -1,4 +1,5 @@
 using System.IO;
+using System.Reflection;
 using CppSharp.AST;
 using CppSharp.Generators;
 using CppSharp.Utils;
@@ -24,7 +25,10 @@ namespace CppSharp.Tests
             module.IncludeDirs.Add(Path.GetFullPath(GetTestsDirectory(@base)));
             module.Headers.Add($"{@base}.h");
             module.OutputNamespace = @base;
+            module.LibraryDirs.Add(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location));
             module.SharedLibraryName = $"{@base}.Native";
+            // TODO: properly handle extensions
+            module.Libraries.Add(module.SharedLibraryName);
             driver.Options.Modules[1].Dependencies.Add(module);
         }
 

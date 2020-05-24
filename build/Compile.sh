@@ -22,7 +22,7 @@ elif [ "$(expr substr $(uname -s) 1 5)" == "Linux" ]; then
 	PREMAKE=$CUR_DIR/premake5-linux-64;
 fi
 
-MONO=mono
+MONO=mono --trace
 if [ "$(uname)" == "Darwin" ]; then
   MONO_PATH=/Library/Frameworks/Mono.framework/Versions/Current/bin/
   MONO="$MONO_PATH$MONO"

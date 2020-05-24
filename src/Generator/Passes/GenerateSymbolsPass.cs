@@ -54,7 +54,21 @@ namespace CppSharp.Passes
                 var e = new SymbolsCodeEventArgs(module);
                 SymbolsCodeGenerated?.Invoke(this, e);
                 if (string.IsNullOrEmpty(e.CustomCompiler))
+                {
+                    using (var linkerOptions = new LinkerOptions())
+                    {
+                        foreach (var libraryDir in module.LibraryDirs)
+                            linkerOptions.AddLibraryDirs(libraryDir);
+
+                        foreach (var library in module.Libraries)
+                            linkerOptions.AddLibraries(library);
+
+                        using (var result = Parser.ClangParser.Build(
+                            Context.ParserOptions, linkerOptions, path))
+                            PrintDiagnostics(result);
+                    }
                     RemainingCompilationTasks--;
+                }
                 else
                     InvokeCompiler(e.CustomCompiler, e.CompilerArguments,
                         e.OutputDir, module);
@@ -149,6 +163,38 @@ namespace CppSharp.Passes
             symbolsCodeGenerator.Process();
 
             return symbolsCodeGenerator;
+        }
+
+        private static void PrintDiagnostics(ParserResult result)
+        {
+            for (uint i = 0; i < result.DiagnosticsCount; i++)
+            {
+                var diag = result.GetDiagnostics(i);
+                switch (diag.Level)
+                {
+                    case ParserDiagnosticLevel.Ignored:
+                    case ParserDiagnosticLevel.Note:
+                        Diagnostics.Message("{0}({1},{2}): {3}: {4}",
+                            diag.FileName, diag.LineNumber, diag.ColumnNumber,
+                            diag.Level.ToString().ToLower(), diag.Message);
+                        break;
+                    case ParserDiagnosticLevel.Warning:
+                        Diagnostics.Warning("{0}({1},{2}): {3}: {4}",
+                            diag.FileName, diag.LineNumber, diag.ColumnNumber,
+                            diag.Level.ToString().ToLower(), diag.Message);
+                        break;
+                    case ParserDiagnosticLevel.Error:
+                        Diagnostics.Error("{0}({1},{2}): {3}: {4}",
+                            diag.FileName, diag.LineNumber, diag.ColumnNumber,
+                            diag.Level.ToString().ToLower(), diag.Message);
+                        break;
+                    case ParserDiagnosticLevel.Fatal:
+                        Diagnostics.Debug("{0}({1},{2}): {3}: {4}",
+                            diag.FileName, diag.LineNumber, diag.ColumnNumber,
+                            diag.Level.ToString().ToLower(), diag.Message);
+                        break;
+                }
+            }
         }
 
         private void InvokeCompiler(string compiler, string arguments, string outputDir, Module module)

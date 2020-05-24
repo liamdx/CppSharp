@@ -55,6 +55,7 @@ public:
     void Setup();
     ParserResult* Parse(const std::vector<std::string>& SourceFiles);
     static ParserResult* ParseLibrary(const LinkerOptions* Opts);
+    ParserResult* Build(const LinkerOptions* LinkerOptions, const std::string& File);
 
     void WalkAST(clang::TranslationUnitDecl* TU);
     void HandleDeclaration(const clang::Decl* D, Declaration* Decl);

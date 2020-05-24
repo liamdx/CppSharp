@@ -431,7 +431,7 @@ namespace CppSharp
                 if (!options.Quiet)
                     Diagnostics.Message("Parsing libraries...");
 
-                if (!driver.ParseLibraries())
+                if (driver.Options.CheckSymbols && !driver.ParseLibraries())
                     return;
 
                 if (!options.Quiet)
